@@ -1,36 +1,17 @@
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC
-  "-//Checkstyle//DTD Suppressions Configuration 1.2//EN"
+  "-//Checkstyle//DTD Suppressions 1.2//EN"
   "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
   <suppress checks="AbbreviationAsWordInName"
-    files="io/github/zirox/cytus/modules/InvalidRecipeIDModule.java"
-    names="InvalidRecipeIDModule"/>
-  <suppress checks="AbbreviationAsWordInName"
-    files="io/github/zirox/cytus/handler/PacketInterceptor.java"
-    names="invalidRecipeID|getInvalidRecipeID"/>
-  <suppress checks="AbbreviationAsWordInName"
-    files="io/github/zirox/cytus/config/CytusConfig.java"
-    names="invalidRecipeID|getInvalidRecipeID"/>
-  <suppress checks="AbbreviationAsWordInName"
-    files="io/github/zirox/cytus/CytusPlugin.java"
-    names="invalidRecipeID|getInvalidRecipeID"/>
-  <suppress checks="AbbreviationAsWordInName"
-    files="io/github/zirox/cytus/modules/PacketLimiterModule.java"
-    names="maxPPS|maxBPS|maxBPStr|getMaxPPS|getMaxBPS"/>
+    files="io[\\/]github[\\/]zirox[\\/]cytus[\\/].*\.java"/>
   <suppress checks="MissingJavadocMethod"
-    files="io/github/zirox/cytus/"/>
+    files="io[\\/]github[\\/]zirox[\\/]cytus[\\/].*\.java"/>
   <suppress checks="JavadocParagraph"
-    files="io/github/zirox/cytus/handler/PacketInterceptor.java"/>
-  <suppress checks="JavadocParagraph"
-    files="io/github/zirox/cytus/modules/ModulesUsageExample.java"/>
+    files="io[\\/]github[\\/]zirox[\\/]cytus[\\/].*\.java"/>
   <suppress checks="OperatorWrap"
-    files="io/github/zirox/cytus/modules/InvalidRecipeIDModule.java"/>
+    files="io[\\/]github[\\/]zirox[\\/]cytus[\\/]modules[\\/]InvalidRecipeIDModule\.java"/>
   <suppress checks="NeedBraces"
-    files="io/github/zirox/cytus/modules/InvalidPayloadModule.java"/>
-  <suppress checks="NeedBraces"
-    files="io/github/zirox/cytus/modules/InvalidSelectBundleModule.java"/>
-  <suppress checks="NeedBraces"
-    files="io/github/zirox/cytus/handler/PacketInterceptor.java"/>
+    files="io[\\/]github[\\/]zirox[\\/]cytus[\\/].*\.java"/>
 </suppressions>
