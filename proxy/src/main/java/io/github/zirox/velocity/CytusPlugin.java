@@ -24,6 +24,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.proxy.VelocityServer;
 import io.github.zirox.velocity.commands.CytusCommand;
+import io.github.zirox.velocity.handler.PacketInterceptor;
 import io.github.zirox.velocity.modules.InvalidPayloadModule;
 import io.github.zirox.velocity.modules.InvalidRecipeIDModule;
 import io.github.zirox.velocity.modules.InvalidSelectBundleModule;
@@ -34,7 +35,7 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
- * Cytus - Comprehensive packet protection module for Velocity.
+ * Cytus V1 By Zirox - Comprehensive packet protection module for Velocity.
  */
 @Plugin(
     id = "cytus",
@@ -55,6 +56,7 @@ public class CytusPlugin {
   private InvalidPayloadModule invalidPayload;
   private InvalidRecipeIDModule invalidRecipeID;
   private InvalidSelectBundleModule invalidSelectBundle;
+  private PacketInterceptor packetInterceptor;
 
   public CytusPlugin(Logger logger, VelocityServer server, @DataDirectory Path dataDirectory) {
     this.logger = logger;
@@ -73,6 +75,18 @@ public class CytusPlugin {
     this.invalidPayload = new InvalidPayloadModule(logger);
     this.invalidRecipeID = new InvalidRecipeIDModule(logger);
     this.invalidSelectBundle = new InvalidSelectBundleModule(logger);
+
+    // Initialize the packet interceptor that listens to Velocity events
+    this.packetInterceptor = new PacketInterceptor(
+        packetLimiter,
+        packetFunnel,
+        packetFilter,
+        invalidPayload,
+        invalidRecipeID,
+        invalidSelectBundle,
+        logger
+    );
+    server.getEventManager().register(this, packetInterceptor);
 
     // Register /cytus command
     CytusCommand cytusCommand = new CytusCommand(logger);
@@ -109,6 +123,10 @@ public class CytusPlugin {
 
   public InvalidSelectBundleModule getInvalidSelectBundle() {
     return invalidSelectBundle;
+  }
+
+  public PacketInterceptor getPacketInterceptor() {
+    return packetInterceptor;
   }
 
   public static String getVersion() {
