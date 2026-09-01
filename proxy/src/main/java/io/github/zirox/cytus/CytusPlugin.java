@@ -24,6 +24,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.proxy.VelocityServer;
 import io.github.zirox.cytus.commands.CytusCommand;
+import io.github.zirox.cytus.config.CytusConfig;
 import io.github.zirox.cytus.handler.PacketInterceptor;
 import io.github.zirox.cytus.modules.InvalidPayloadModule;
 import io.github.zirox.cytus.modules.InvalidRecipeIDModule;
@@ -57,6 +58,7 @@ public class CytusPlugin {
   private InvalidRecipeIDModule invalidRecipeID;
   private InvalidSelectBundleModule invalidSelectBundle;
   private PacketInterceptor packetInterceptor;
+  private CytusConfig cytusConfig;
 
   public CytusPlugin(Logger logger, VelocityServer server, @DataDirectory Path dataDirectory) {
     this.logger = logger;
@@ -88,8 +90,22 @@ public class CytusPlugin {
     );
     server.getEventManager().register(this, packetInterceptor);
 
+    // Initialize CytusConfig
+    this.cytusConfig = new CytusConfig(
+        logger,
+        dataDirectory,
+        packetLimiter,
+        packetFunnel,
+        packetFilter,
+        invalidPayload,
+        invalidRecipeID,
+        invalidSelectBundle
+    );
+    cytusConfig.reloadAll();
+
     // Register /cytus command
     CytusCommand cytusCommand = new CytusCommand(logger);
+    cytusCommand.setCytusConfig(cytusConfig);
     server.getCommandManager().register("cytus", cytusCommand);
 
     logger.info("Cytus V1 By Zirox - Enabled!");
@@ -127,6 +143,10 @@ public class CytusPlugin {
 
   public PacketInterceptor getPacketInterceptor() {
     return packetInterceptor;
+  }
+
+  public CytusConfig getCytusConfig() {
+    return cytusConfig;
   }
 
   public static String getVersion() {

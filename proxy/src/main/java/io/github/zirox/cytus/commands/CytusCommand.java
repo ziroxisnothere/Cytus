@@ -19,6 +19,7 @@ package io.github.zirox.cytus.commands;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import io.github.zirox.cytus.config.CytusConfig;
 import java.util.List;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
@@ -26,7 +27,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 /**
- * /cytus command - displays Cytus version info.
+ * /cytus command - displays Cytus info and handles subcommands.
  */
 public class CytusCommand implements SimpleCommand {
 
@@ -34,24 +35,70 @@ public class CytusCommand implements SimpleCommand {
   private static final String AUTHOR = "Zirox";
 
   private final Logger logger;
+  private CytusConfig cytusConfig;
 
   public CytusCommand(Logger logger) {
     this.logger = logger;
   }
 
+  public void setCytusConfig(CytusConfig cytusConfig) {
+    this.cytusConfig = cytusConfig;
+  }
+
   @Override
   public void execute(Invocation invocation) {
+    String[] args = invocation.args();
     CommandSource source = invocation.source();
-    showCytusInfo(source);
+
+    if (args.length == 0) {
+      showCytusInfo(source);
+      return;
+    }
+
+    String subCommand = args[0].toLowerCase();
+
+    switch (subCommand) {
+      case "reload" -> handleReload(source);
+      case "info" -> showCytusInfo(source);
+      default -> source.sendMessage(Component.text("Usage: /cytus [reload|info]", NamedTextColor.RED));
+    }
+  }
+
+  private void handleReload(CommandSource source) {
+    if (!source.hasPermission("cytus.command.reload")) {
+      source.sendMessage(Component.text("You don't have permission to reload Cytus config.", NamedTextColor.RED));
+      return;
+    }
+
+    if (cytusConfig == null) {
+      source.sendMessage(Component.text("Cytus config not initialized.", NamedTextColor.RED));
+      return;
+    }
+
+    boolean success = cytusConfig.reloadAll();
+    if (success) {
+      source.sendMessage(Component.text("Cytus config reloaded successfully!", NamedTextColor.GREEN));
+      logger.info("Cytus config reloaded by " + source);
+    } else {
+      source.sendMessage(Component.text("Failed to reload some Cytus configs. Check console for details.", NamedTextColor.YELLOW));
+    }
   }
 
   @Override
   public boolean hasPermission(Invocation invocation) {
+    String[] args = invocation.args();
+    if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
+      return invocation.source().hasPermission("cytus.command.reload");
+    }
     return invocation.source().hasPermission("cytus.command");
   }
 
   @Override
   public List<String> suggest(Invocation invocation) {
+    String[] args = invocation.args();
+    if (args.length == 1) {
+      return List.of("reload", "info");
+    }
     return List.of();
   }
 
@@ -60,10 +107,17 @@ public class CytusCommand implements SimpleCommand {
    */
   public static void showCytusInfo(CommandSource source) {
     source.sendMessage(Component.empty()
-        .append(Component.text("Cytus ", NamedTextColor.AQUA, TextDecoration.BOLD))
+        .append(Component.text("╔══════════════════════════════════════╗", NamedTextColor.DARK_GRAY))
+    );
+    source.sendMessage(Component.empty()
+        .append(Component.text(" Cytus ", NamedTextColor.AQUA, TextDecoration.BOLD))
         .append(Component.text(VERSION, NamedTextColor.WHITE))
         .append(Component.text(" By ", NamedTextColor.GRAY))
         .append(Component.text(AUTHOR, NamedTextColor.GOLD))
+    );
+    source.sendMessage(Component.text(" Comprehensive packet protection for Velocity", NamedTextColor.GRAY));
+    source.sendMessage(Component.empty()
+        .append(Component.text("╚══════════════════════════════════════╝", NamedTextColor.DARK_GRAY))
     );
   }
 }

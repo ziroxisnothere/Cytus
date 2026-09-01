@@ -17,36 +17,65 @@
 
 package io.github.zirox.cytus.util;
 
-import org.slf4j.Logger;
+import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
- * Logger wrapper for Cytus plugin.
+ * CytusLogger provides logging utilities with Cytus branding.
  */
 public class CytusLogger {
 
+  private static final String PREFIX = "[Cytus] ";
   private final Logger logger;
 
   public CytusLogger(Logger logger) {
     this.logger = logger;
   }
 
+  /**
+   * Logs a message with Cytus prefix.
+   */
+  public void log(String message) {
+    logger.info(PREFIX + message);
+  }
+
+  /**
+   * Logs a warning with Cytus prefix.
+   */
   public void warn(String message) {
-    logger.warn("[Cytus] " + message);
+    logger.warning(PREFIX + message);
   }
 
-  public void info(String message) {
-    logger.info("[Cytus] " + message);
-  }
-
+  /**
+   * Logs a debug message with Cytus prefix.
+   */
   public void debug(String message) {
-    logger.debug("[Cytus] " + message);
+    logger.fine(PREFIX + message);
   }
 
+  /**
+   * Logs an error with Cytus prefix.
+   */
   public void error(String message) {
-    logger.error("[Cytus] " + message);
+    logger.severe(PREFIX + message);
   }
 
-  public void error(String message, Throwable t) {
-    logger.error("[Cytus] " + message, t);
+  /**
+   * Logs a rejection event.
+   */
+  public void logRejection(String player, String reason) {
+    logger.info(PREFIX + "REJECTED [" + player + "] " + reason);
+  }
+
+  /**
+   * Formats a rejection message as an Adventure Component.
+   */
+  public static Component rejectionMessage(String reason) {
+    return Component.text()
+        .append(Component.text("[Cytus] ", NamedTextColor.RED))
+        .append(Component.text("Packet rejected: ", NamedTextColor.YELLOW))
+        .append(Component.text(reason, NamedTextColor.GRAY))
+        .build();
   }
 }
