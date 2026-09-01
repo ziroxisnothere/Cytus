@@ -64,7 +64,9 @@ public class InvalidSelectBundleModule extends ViolationsModule {
    * @return true if the bundle index is valid
    */
   public boolean isValidBundleIndex(int bundleIndex, int bundleSize) {
-    if (!this.enabled) return true;
+    if (!this.enabled) {
+      return true;
+    }
     // Mojang spec: bundles have up to 100 entries, indices are 0-based
     return bundleIndex >= 0 && bundleIndex < bundleSize && bundleSize <= 100;
   }

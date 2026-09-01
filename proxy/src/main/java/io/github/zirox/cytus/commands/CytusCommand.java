@@ -21,10 +21,10 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import io.github.zirox.cytus.config.CytusConfig;
 import java.util.List;
-import org.apache.logging.log4j.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.apache.logging.log4j.Logger;
 
 /**
  * /cytus command - displays Cytus info and handles subcommands.

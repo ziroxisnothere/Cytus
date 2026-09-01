@@ -17,9 +17,7 @@
 
 package io.github.zirox.cytus.config;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import io.github.zirox.cytus.modules.ActionCooldownsModule;
 import io.github.zirox.cytus.modules.InvalidPayloadModule;
 import io.github.zirox.cytus.modules.InvalidRecipeIDModule;
 import io.github.zirox.cytus.modules.InvalidSelectBundleModule;
@@ -77,12 +75,36 @@ public class CytusConfig {
     int loaded = 0;
     int failed = 0;
 
-    if (reload(packetLimiter, "packet-limiter")) loaded++; else failed++;
-    if (reload(packetFunnel, "packet-funnel")) loaded++; else failed++;
-    if (reload(packetFilter, "packet-filter")) loaded++; else failed++;
-    if (reload(invalidPayload, "invalid-payload")) loaded++; else failed++;
-    if (reload(invalidRecipeID, "invalid-recipe-id")) loaded++; else failed++;
-    if (reload(invalidSelectBundle, "invalid-select-bundle")) loaded++; else failed++;
+    if (reload(packetLimiter, "packet-limiter")) {
+      loaded++;
+    } else {
+      failed++;
+    }
+    if (reload(packetFunnel, "packet-funnel")) {
+      loaded++;
+    } else {
+      failed++;
+    }
+    if (reload(packetFilter, "packet-filter")) {
+      loaded++;
+    } else {
+      failed++;
+    }
+    if (reload(invalidPayload, "invalid-payload")) {
+      loaded++;
+    } else {
+      failed++;
+    }
+    if (reload(invalidRecipeID, "invalid-recipe-id")) {
+      loaded++;
+    } else {
+      failed++;
+    }
+    if (reload(invalidSelectBundle, "invalid-select-bundle")) {
+      loaded++;
+    } else {
+      failed++;
+    }
 
     logger.info("Cytus config reloaded: " + loaded + " modules loaded, " + failed + " failed");
     return failed == 0;

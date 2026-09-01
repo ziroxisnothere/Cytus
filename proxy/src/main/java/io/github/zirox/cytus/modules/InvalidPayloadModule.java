@@ -93,7 +93,9 @@ public class InvalidPayloadModule extends ViolationsModule {
    * Checks if a channel is a known exploit channel.
    */
   public boolean isExploitChannel(String channel) {
-    if (channel == null) return false;
+    if (channel == null) {
+      return false;
+    }
     String lower = channel.toLowerCase(Locale.ROOT);
     return EXPLOIT_CHANNELS.contains(lower);
   }
@@ -102,7 +104,9 @@ public class InvalidPayloadModule extends ViolationsModule {
    * Checks if a channel is known to send oversized payloads.
    */
   public boolean isOversizedPayloadChannel(String channel) {
-    if (channel == null) return false;
+    if (channel == null) {
+      return false;
+    }
     String lower = channel.toLowerCase(Locale.ROOT);
     return OVERSIZED_PAYLOAD_CHANNELS.contains(lower);
   }
@@ -147,9 +151,15 @@ public class InvalidPayloadModule extends ViolationsModule {
    * Returns true if a custom payload (plugin message) should be rejected.
    */
   public boolean shouldRejectPayload(String channel, byte[] data) {
-    if (!enabled) return false;
-    if (isExploitChannel(channel)) return true;
-    if (isPayloadOversized(channel, data == null ? 0 : data.length)) return true;
+    if (!enabled) {
+      return false;
+    }
+    if (isExploitChannel(channel)) {
+      return true;
+    }
+    if (isPayloadOversized(channel, data == null ? 0 : data.length)) {
+      return true;
+    }
     return false;
   }
 }

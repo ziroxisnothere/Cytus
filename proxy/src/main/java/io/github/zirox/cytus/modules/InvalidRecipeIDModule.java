@@ -106,8 +106,8 @@ public class InvalidRecipeIDModule extends ViolationsModule {
         return;
       }
 
-      if (recipeIndex != -1 &&
-          (recipeIndex < 0 || recipeIndex >= this.allRecipeDisplays.size())) {
+      if (recipeIndex != -1
+          && (recipeIndex < 0 || recipeIndex >= this.allRecipeDisplays.size())) {
         // Cancel the event
         String reason = "Invalid recipe: " + recipeIndex + "/" + this.allRecipeDisplays.size();
         this.logger.debug(reason);
@@ -122,7 +122,9 @@ public class InvalidRecipeIDModule extends ViolationsModule {
   }
 
   private String getPacketName(Object packet) {
-    if (packet == null) return null;
+    if (packet == null) {
+      return null;
+    }
     // Simplified - would get actual packet class name
     return packet.getClass().getSimpleName();
   }

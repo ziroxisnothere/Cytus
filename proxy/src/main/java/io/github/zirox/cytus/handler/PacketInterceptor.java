@@ -289,10 +289,18 @@ public class PacketInterceptor extends ChannelInboundHandlerAdapter {
    * Approximate bytes for packet ID (1-5 bytes).
    */
   private int packetIdBytes(int packetId) {
-    if (packetId < 0x80) return 1;
-    if (packetId < 0x4000) return 2;
-    if (packetId < 0x200000) return 3;
-    if (packetId < 0x10000000) return 4;
+    if (packetId < 0x80) {
+      return 1;
+    }
+    if (packetId < 0x4000) {
+      return 2;
+    }
+    if (packetId < 0x200000) {
+      return 3;
+    }
+    if (packetId < 0x10000000) {
+      return 4;
+    }
     return 5;
   }
 
