@@ -54,6 +54,20 @@ public class MinecraftDecoder extends ChannelInboundHandlerAdapter {
     this.state = StateRegistry.HANDSHAKE;
   }
 
+  /**
+   * Returns the current protocol registry.
+   */
+  public StateRegistry.PacketRegistry.ProtocolRegistry getProtocolRegistry() {
+    return registry;
+  }
+
+  /**
+   * Returns the direction this decoder handles.
+   */
+  public ProtocolUtils.Direction getDirection() {
+    return direction;
+  }
+
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     if (msg instanceof ByteBuf buf) {

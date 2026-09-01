@@ -269,6 +269,13 @@ public class PacketLimiterModule extends ViolationsModule {
   }
 
   /**
+   * Checks if a raw packet byte size exceeds the limit.
+   */
+  public boolean checkPacketSizeBytes(int size) {
+    return size > this.maxSizeBytes;
+  }
+
+  /**
    * Checks if a string's byte length exceeds the NBT string limit.
    */
   public CheckItemResult checkNbtString(String str) {
