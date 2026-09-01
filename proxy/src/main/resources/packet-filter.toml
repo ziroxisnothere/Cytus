@@ -1,0 +1,16 @@
+# Packet Filter Module Configuration
+# Based on FireGuard's PacketFilter module design
+
+enabled = true
+
+# Violations threshold before action
+vls = 50.0
+
+# Allow packets when player is offline
+offline_packets = true
+
+# Blacklisted packet names
+blacklist = [
+  "illegal_packet_1",
+  "illegal_packet_2"
+]

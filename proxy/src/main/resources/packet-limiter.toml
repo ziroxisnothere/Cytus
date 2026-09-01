@@ -1,0 +1,58 @@
+# Packet Limiter Module Configuration
+# Based on FireGuard's PacketLimiter module design
+
+enabled = true
+
+# Violations threshold before action
+vls = 50.0
+
+# Maximum packet size (supports kb, mb, gb suffixes)
+max_size = "32kb"
+
+# Tab complete request limit
+tab_complete_limit = 128
+
+# Firework limits
+firework_effect_limit = 8
+firework_power_limit = 3
+
+# Item limits
+[item_limits]
+displayname = 256
+lore = 128
+
+# Book limits
+[book_limits]
+title = 64
+author = 64
+pages = 50
+content = 512
+
+# Sign size limit
+max_size_sign = 128
+
+# Max flags configuration
+[max_flags]
+enabled = true
+colors = 16
+translate = 8
+explosions = 4
+default = 32
+
+# Rate limits
+max_pps = 2048
+max_bps = "32kb"
+
+# NBT string limits
+max_nbt_string_length = 128
+
+# Slot and button limits
+max_slot_id = 54
+max_button_id = 8
+pick_item_slot_min = 0
+pick_item_slot_max = 44
+
+# Move packet limits
+[move_packet]
+max_coordinate = 30000000.0
+reject_infinite = true

@@ -1,0 +1,35 @@
+# Packet Funnel Module Configuration
+# Based on FireGuard's PacketFunnel module design
+
+enabled = true
+
+# Violations threshold before action
+vls = 50.0
+
+# Data multiplier for VLS calculation (supports kb, mb, gb suffixes)
+data_multiplier = "500"
+
+# Packet-specific multipliers (VLS per byte)
+[packet_multipliers]
+Default = 0.01
+Login = 0.1
+Play = 0.05
+Configuration = 0.02
+Handshake = 0.01
+Status = 0.01
+
+# Floodgate (Bedrock) compensations
+[floodgate.compensations]
+Login = 1.5
+Play = 1.2
+Default = 1.0
+
+# Packet whitelist (packets that bypass some checks)
+whitelist = [
+  "keepalive",
+  "ping",
+  "pong"
+]
+
+# Maximum capacity for whitelisted packets before checking applies
+max-whitelist-capacity = 10

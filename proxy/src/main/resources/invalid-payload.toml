@@ -1,0 +1,17 @@
+# Invalid Payload Module Configuration
+# Based on FireGuard's InvalidPayload module design
+
+enabled = true
+
+# Violations threshold before action
+vls = 100.0
+
+# Enable beehive crash exploit detection (position packing out-of-bounds)
+beehive_crash = true
+
+# Log detected exploit attempts
+logs_exploit = true
+
+# Maximum plugin message payload size in bytes
+# Channels in oversized list get stricter limits
+max_payload_size = 1024

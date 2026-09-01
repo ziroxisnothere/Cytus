@@ -1,0 +1,7 @@
+# Invalid Recipe ID Module Configuration
+# Based on FireGuard's InvalidRecipeID module design
+
+enabled = true
+
+# Violations threshold before action
+vls = 100.0

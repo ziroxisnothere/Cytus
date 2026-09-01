@@ -1,0 +1,7 @@
+# Invalid Select Bundle Module Configuration
+# Based on FireGuard's InvalidSelectBundle module design
+
+enabled = true
+
+# Violations threshold before action
+vls = 100.0
