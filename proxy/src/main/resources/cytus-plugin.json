@@ -1,0 +1,8 @@
+{
+  "id": "cytus",
+  "name": "Cytus",
+  "version": "V1",
+  "description": "Comprehensive packet protection and filtering for Velocity proxy",
+  "authors": ["Zirox"],
+  "main": "io.github.zirox.velocity.CytusPlugin"
+}
