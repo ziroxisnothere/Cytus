@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.zirox.velocity.modules;
+package io.github.zirox.cytus.modules;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import java.util.logging.Logger;

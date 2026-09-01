@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.zirox.velocity.handler;
+package io.github.zirox.cytus.handler;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -24,14 +24,14 @@ import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.packet.BundleDelimiterPacket;
 import com.velocitypowered.proxy.protocol.packet.ClientSettingsPacket;
 import com.velocitypowered.proxy.protocol.packet.PluginMessagePacket;
-import io.github.zirox.velocity.modules.CheckItemResult;
-import io.github.zirox.velocity.modules.InvalidPayloadModule;
-import io.github.zirox.velocity.modules.InvalidRecipeIDModule;
-import io.github.zirox.velocity.modules.InvalidSelectBundleModule;
-import io.github.zirox.velocity.modules.PacketFilterModule;
-import io.github.zirox.velocity.modules.PacketFunnelModule;
-import io.github.zirox.velocity.modules.PacketLimiterModule;
-import io.github.zirox.velocity.util.CytusLogger;
+import io.github.zirox.cytus.modules.CheckItemResult;
+import io.github.zirox.cytus.modules.InvalidPayloadModule;
+import io.github.zirox.cytus.modules.InvalidRecipeIDModule;
+import io.github.zirox.cytus.modules.InvalidSelectBundleModule;
+import io.github.zirox.cytus.modules.PacketFilterModule;
+import io.github.zirox.cytus.modules.PacketFunnelModule;
+import io.github.zirox.cytus.modules.PacketLimiterModule;
+import io.github.zirox.cytus.util.CytusLogger;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 

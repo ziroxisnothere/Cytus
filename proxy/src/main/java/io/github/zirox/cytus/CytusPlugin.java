@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.zirox.velocity;
+package io.github.zirox.cytus;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -23,14 +23,14 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.proxy.VelocityServer;
-import io.github.zirox.velocity.commands.CytusCommand;
-import io.github.zirox.velocity.handler.PacketInterceptor;
-import io.github.zirox.velocity.modules.InvalidPayloadModule;
-import io.github.zirox.velocity.modules.InvalidRecipeIDModule;
-import io.github.zirox.velocity.modules.InvalidSelectBundleModule;
-import io.github.zirox.velocity.modules.PacketFilterModule;
-import io.github.zirox.velocity.modules.PacketFunnelModule;
-import io.github.zirox.velocity.modules.PacketLimiterModule;
+import io.github.zirox.cytus.commands.CytusCommand;
+import io.github.zirox.cytus.handler.PacketInterceptor;
+import io.github.zirox.cytus.modules.InvalidPayloadModule;
+import io.github.zirox.cytus.modules.InvalidRecipeIDModule;
+import io.github.zirox.cytus.modules.InvalidSelectBundleModule;
+import io.github.zirox.cytus.modules.PacketFilterModule;
+import io.github.zirox.cytus.modules.PacketFunnelModule;
+import io.github.zirox.cytus.modules.PacketLimiterModule;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
