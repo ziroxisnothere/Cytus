@@ -18,7 +18,7 @@
 package io.github.zirox.cytus.modules;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import com.velocitypowered.api.proxy.player.Player;
+import com.velocitypowered.api.proxy.Player;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;

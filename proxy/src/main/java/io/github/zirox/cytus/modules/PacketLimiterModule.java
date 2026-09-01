@@ -19,7 +19,7 @@ package io.github.zirox.cytus.modules;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.velocitypowered.api.network.ProtocolVersion;
-import com.velocitypowered.api.proxy.player.Player;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.VelocityServer;
 import io.netty.buffer.ByteBuf;
 import java.nio.charset.StandardCharsets;
