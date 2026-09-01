@@ -18,11 +18,15 @@
 package io.github.zirox.cytus;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.proxy.VelocityServer;
+import com.velocitypowered.proxy.connection.MinecraftConnection;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.network.Connections;
 import io.github.zirox.cytus.commands.CytusCommand;
 import io.github.zirox.cytus.config.CytusConfig;
 import io.github.zirox.cytus.handler.PacketInterceptor;
@@ -32,6 +36,7 @@ import io.github.zirox.cytus.modules.InvalidSelectBundleModule;
 import io.github.zirox.cytus.modules.PacketFilterModule;
 import io.github.zirox.cytus.modules.PacketFunnelModule;
 import io.github.zirox.cytus.modules.PacketLimiterModule;
+import io.netty.channel.ChannelPipeline;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -78,7 +83,7 @@ public class CytusPlugin {
     this.invalidRecipeID = new InvalidRecipeIDModule(logger);
     this.invalidSelectBundle = new InvalidSelectBundleModule(logger);
 
-    // Initialize the packet interceptor that listens to Velocity events
+    // Initialize shared packet interceptor for plugin message events
     this.packetInterceptor = new PacketInterceptor(
         packetLimiter,
         packetFunnel,
@@ -109,6 +114,29 @@ public class CytusPlugin {
     server.getCommandManager().register("cytus", cytusCommand);
 
     logger.info("Cytus V1 By Zirox - Enabled!");
+  }
+
+  @Subscribe
+  public void onPostLogin(PostLoginEvent event) {
+    // Inject PacketInterceptor into the channel pipeline AFTER player joins
+    // ConnectedPlayer IS a MinecraftConnection, so we can inject on the player's connection directly
+    if (event.getPlayer() instanceof ConnectedPlayer connectedPlayer) {
+      try {
+        MinecraftConnection connection = connectedPlayer;
+        ChannelPipeline pipeline = connection.getChannel().pipeline();
+        if (pipeline.get("cytus_packet_interceptor") == null) {
+          PacketInterceptor interceptor = new PacketInterceptor(
+              packetLimiter, packetFunnel, packetFilter,
+              invalidPayload, invalidRecipeID, invalidSelectBundle, logger
+          );
+          interceptor.setPlayer(connectedPlayer);
+          pipeline.addBefore(Connections.MINECRAFT_DECODER, "cytus_packet_interceptor", interceptor);
+          logger.fine("Injected PacketInterceptor for player: " + connectedPlayer.getUsername());
+        }
+      } catch (Exception e) {
+        logger.warning("Failed to inject PacketInterceptor for " + connectedPlayer.getUsername() + ": " + e.getMessage());
+      }
+    }
   }
 
   @Subscribe

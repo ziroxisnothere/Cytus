@@ -19,7 +19,6 @@ package io.github.zirox.cytus.handler;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
-import com.velocitypowered.proxy.connection.MinecraftConnection;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
@@ -163,10 +162,9 @@ public class PacketInterceptor extends ChannelInboundHandlerAdapter {
       if (decoder == null) {
         return "Unknown{id=" + packetId + "}";
       }
-      com.velocitypowered.proxy.protocol.StateRegistry.PacketRegistry.ProtocolRegistry registry =
-          decoder.getProtocolRegistry();
-      Class<? extends MinecraftPacket> packetClass = registry.getPacketClass(packetId);
-      return packetClass != null ? packetClass.getSimpleName() : "Unknown{id=" + packetId + "}";
+      var registry = decoder.getProtocolRegistry();
+      MinecraftPacket packet = registry.createPacket(packetId);
+      return packet != null ? packet.getClass().getSimpleName() : "Unknown{id=" + packetId + "}";
     } catch (Exception e) {
       return "Unknown{id=" + packetId + "}";
     }
@@ -201,35 +199,33 @@ public class PacketInterceptor extends ChannelInboundHandlerAdapter {
 
   /**
    * Handles PluginMessage (custom payload) packet validation.
+   * Reads: VarInt packetId, String channel, byte[] data
    */
   private CheckItemResult handlePluginMessageCheck(int packetId, ByteBuf buf) {
     try {
-        int readerIndex = buf.readerIndex();
-        // Skip the packet ID we already read
-        int packetIdLen = ProtocolUtils.readVarInt(buf);
-        readerIndex = buf.readerIndex();
+      int beforeChannel = buf.readerIndex();
+      ProtocolUtils.readVarInt(buf); // packet ID (already read, just advance)
+      int afterId = buf.readerIndex();
+      String channel = ProtocolUtils.readString(buf);
+      int afterChannel = buf.readerIndex();
+      int payloadSize = buf.readableBytes();
 
-        // Read channel name
-        String channel = ProtocolUtils.readString(buf);
-        // Reset reader index
-        buf.readerIndex(readerIndex);
+      buf.readerIndex(beforeChannel); // Reset for downstream
 
-        if (invalidPayload.isExploitChannel(channel)) {
-          return CheckItemResult.INVALID_ITEM;
-        }
-
-        // Read remaining bytes for payload size
-        int payloadSize = buf.readableBytes() - packetIdLen;
-        if (invalidPayload.isPayloadOversized(channel, payloadSize)) {
-          return CheckItemResult.STRING_TOO_LONG;
-        }
-
-        if (packetFilter.isPacketBlacklisted("PluginMessage:" + channel)) {
-          return CheckItemResult.INVALID_ITEM;
-        }
-      } catch (Exception e) {
-        // Malformed packet - let downstream handle it
+      if (invalidPayload.isExploitChannel(channel)) {
+        return CheckItemResult.INVALID_ITEM;
       }
+
+      if (invalidPayload.isPayloadOversized(channel, payloadSize)) {
+        return CheckItemResult.STRING_TOO_LONG;
+      }
+
+      if (packetFilter.isPacketBlacklisted("PluginMessage:" + channel)) {
+        return CheckItemResult.INVALID_ITEM;
+      }
+    } catch (Exception e) {
+      // Malformed packet - let downstream handle it
+    }
     return CheckItemResult.VALID_ITEM;
   }
 
@@ -244,14 +240,14 @@ public class PacketInterceptor extends ChannelInboundHandlerAdapter {
 
   /**
    * Handles SelectBundle packet validation.
+   * Reads: VarInt packetId, int bundleIndex
    */
   private CheckItemResult handleSelectBundleCheck(int packetId, ByteBuf buf) {
     try {
-      int readerIndex = buf.readerIndex();
-      int packetIdLen = ProtocolUtils.readVarInt(buf);
-      // SelectBundle has: int bundleIndex
+      int before = buf.readerIndex();
+      ProtocolUtils.readVarInt(buf); // Skip packet ID
       int bundleIndex = buf.readInt();
-      buf.readerIndex(readerIndex);
+      buf.readerIndex(before); // Reset for downstream
 
       if (!invalidSelectBundle.isValidBundleIndex(bundleIndex)) {
         return CheckItemResult.INVALID_ITEM;
@@ -265,27 +261,23 @@ public class PacketInterceptor extends ChannelInboundHandlerAdapter {
 
   /**
    * Handles move/position packet validation.
+   * PlayerPosition: VarInt(id), double x, double y, double z, boolean onGround
+   * PlayerPositionLook: VarInt(id), double x, double y, double z, float yaw, float pitch, boolean onGround
    */
   private CheckItemResult handleMovePacketCheck(int packetId, ByteBuf buf) {
     try {
-      int readerIndex = buf.readerIndex();
+      int before = buf.readerIndex();
       ProtocolUtils.readVarInt(buf); // Skip packet ID
 
-      // Player position packets contain 3 doubles (x, y, z)
-      // Use the readable bytes to estimate
-      int remaining = buf.readableBytes();
-      buf.readerIndex(readerIndex);
-
-      if (remaining < 24) { // At least 3 doubles = 24 bytes
+      if (buf.readableBytes() < 25) { // At least x,y,z (24 bytes) + 1 byte onGround
+        buf.readerIndex(before);
         return CheckItemResult.OUT_OF_BOUNDS_MOVE;
       }
 
-      // Read position values
-      buf.skipBytes(packetIdBytes(packetId));
       double x = buf.readDouble();
       double y = buf.readDouble();
       double z = buf.readDouble();
-      buf.readerIndex(readerIndex);
+      buf.readerIndex(before); // Reset for downstream
 
       return packetLimiter.checkMovePosition(x, y, z);
     } catch (Exception e) {
