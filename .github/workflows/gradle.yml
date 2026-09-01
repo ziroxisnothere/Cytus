@@ -35,7 +35,7 @@ jobs:
       - name: Find JAR file
         id: find-jar
         run: |
-          JAR_FILES=(build/libs/ParadiseClient-*.jar)
+          JAR_FILES=(build/libs/*.jar)
           BASE_JAR_FILES=()
           for file in "${JAR_FILES[@]}"; do
             if [[ ! "$file" == *"-dev.jar" && ! "$file" == *"-sources.jar" ]]; then
