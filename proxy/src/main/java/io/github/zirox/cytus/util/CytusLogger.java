@@ -54,4 +54,18 @@ public class CytusLogger {
   public void debug(String message) {
     logger.debug(PREFIX + message);
   }
+
+  /**
+   * Generic log method - logs at info level.
+   */
+  public void log(String message) {
+    info(message);
+  }
+
+  /**
+   * Logs a packet rejection with the player and reason.
+   */
+  public void logRejection(String playerName, String reason) {
+    warn("Rejected packet from " + playerName + ": " + reason);
+  }
 }
