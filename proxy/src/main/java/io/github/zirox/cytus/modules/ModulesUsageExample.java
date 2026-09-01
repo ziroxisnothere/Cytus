@@ -22,33 +22,23 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.nio.file.Path;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Example plugin integrating all three packet limiting modules:
- * - PacketLimiterModule: size/content checks
- * - PacketFunnelModule: throughput with multipliers
- * - PacketFilterModule: blacklist-based filtering
+ * Example integration of packet limiting modules.
  *
  * Usage from your Netty handler:
  *   if (packetFilter.isPacketBlacklisted(packetName)) { cancel; }
  *   if (packetLimiter.filterPacket(...) != VALID) { cancel; }
  *   if (packetFunnel.shouldCancel(player, packetName, capacity)) { cancel; }
  */
-@Plugin(
-    name = "packetguard",
-    id = "packetguard",
-    version = "1.0.0",
-    description = "Comprehensive packet limiting and filtering for Velocity",
-    authors = {"zirox"}
-)
 public class ModulesUsageExample extends ChannelInboundHandlerAdapter {
 
   private final Logger logger;
@@ -70,29 +60,31 @@ public class ModulesUsageExample extends ChannelInboundHandlerAdapter {
     this.packetFunnel = new PacketFunnelModule(logger, server);
     this.packetFilter = new PacketFilterModule(logger);
 
-    logger.info("PacketGuard modules initialized");
+    logger.info("Cytus packet modules initialized");
   }
 
   @Subscribe
   public void onProxyInitialize(ProxyInitializeEvent event) {
-    logger.info("PacketGuard enabled!");
+    logger.info("Cytus enabled!");
   }
 
   @Subscribe
   public void onProxyShutdown(ProxyShutdownEvent event) {
-    logger.info("PacketGuard disabled!");
+    logger.info("Cytus disabled!");
   }
 
   @Subscribe
   public void onPlayerLogin(LoginEvent event) {
-    packetFilter.clearViolations(event.getPlayer());
-    logger.info("Player {} logged in", event.getPlayer().getUsername());
+    Player player = event.getPlayer();
+    packetFilter.clearViolations(player);
+    logger.info("Player " + player.getUsername() + " logged in");
   }
 
   @Subscribe
   public void onPlayerDisconnect(DisconnectEvent event) {
-    packetFilter.clearViolations(event.getPlayer());
-    logger.info("Player {} disconnected", event.getPlayer().getUsername());
+    Player player = event.getPlayer();
+    packetFilter.clearViolations(player);
+    logger.info("Player " + player.getUsername() + " disconnected");
   }
 
   @Override
@@ -102,14 +94,14 @@ public class ModulesUsageExample extends ChannelInboundHandlerAdapter {
 
       // 1) Blacklist check (PacketFilterModule)
       if (packetFilter.isEnabled() && packetFilter.isPacketBlacklisted(packetName)) {
-        logger.fine("Packet {} is blacklisted, dropping", packetName);
+        logger.debug("Packet " + packetName + " is blacklisted, dropping");
         return;
       }
 
       // 2) Size/content check (PacketLimiterModule)
       CheckItemResult limitResult = packetLimiter.filterPacket(packetName, null, null);
       if (limitResult != CheckItemResult.VALID_ITEM) {
-        logger.warning("Packet {} rejected by PacketLimiter: {}", packetName, limitResult);
+        logger.warn("Packet " + packetName + " rejected by PacketLimiter: " + limitResult);
         return;
       }
 

@@ -26,11 +26,11 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import java.nio.file.Path;
-import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Example plugin showing how to integrate PacketLimiterModule with Velocity's packet pipeline.
@@ -74,14 +74,12 @@ public class PacketLimiterModuleExample extends ChannelInboundHandlerAdapter {
 
   @Subscribe
   public void onPlayerLogin(LoginEvent event) {
-    logger.info("Player {} is logging in", event.getPlayer().getUsername());
+    logger.info("Player " + event.getPlayer().getUsername() + " is logging in");
   }
 
   @Subscribe
   public void onPlayerDisconnect(DisconnectEvent event) {
-    logger.info("Player {} disconnected: {}",
-        event.getPlayer().getUsername(),
-        event.getReason().orElse("Unknown"));
+    logger.info("Player " + event.getPlayer().getUsername() + " disconnected");
   }
 
   @Override
@@ -95,7 +93,7 @@ public class PacketLimiterModuleExample extends ChannelInboundHandlerAdapter {
       );
 
       if (result != CheckItemResult.VALID_ITEM) {
-        logger.warning("Packet {} rejected: {}", packet.getClass().getSimpleName(), result);
+        logger.warn("Packet " + packet.getClass().getSimpleName() + " rejected: " + result);
         return;
       }
     }

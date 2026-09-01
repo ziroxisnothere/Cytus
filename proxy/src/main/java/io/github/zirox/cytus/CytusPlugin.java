@@ -38,7 +38,7 @@ import io.github.zirox.cytus.modules.PacketFunnelModule;
 import io.github.zirox.cytus.modules.PacketLimiterModule;
 import io.netty.channel.ChannelPipeline;
 import java.nio.file.Path;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Cytus V1 By Zirox - Comprehensive packet protection module for Velocity.
@@ -119,10 +119,9 @@ public class CytusPlugin {
   @Subscribe
   public void onPostLogin(PostLoginEvent event) {
     // Inject PacketInterceptor into the channel pipeline AFTER player joins
-    // ConnectedPlayer IS a MinecraftConnection, so we can inject on the player's connection directly
     if (event.getPlayer() instanceof ConnectedPlayer connectedPlayer) {
       try {
-        MinecraftConnection connection = connectedPlayer;
+        MinecraftConnection connection = connectedPlayer.getConnection();
         ChannelPipeline pipeline = connection.getChannel().pipeline();
         if (pipeline.get("cytus_packet_interceptor") == null) {
           PacketInterceptor interceptor = new PacketInterceptor(
@@ -131,10 +130,10 @@ public class CytusPlugin {
           );
           interceptor.setPlayer(connectedPlayer);
           pipeline.addBefore(Connections.MINECRAFT_DECODER, "cytus_packet_interceptor", interceptor);
-          logger.fine("Injected PacketInterceptor for player: " + connectedPlayer.getUsername());
+          logger.debug("Injected PacketInterceptor for player: " + connectedPlayer.getUsername());
         }
       } catch (Exception e) {
-        logger.warning("Failed to inject PacketInterceptor for " + connectedPlayer.getUsername() + ": " + e.getMessage());
+        logger.warn("Failed to inject PacketInterceptor for " + connectedPlayer.getUsername() + ": " + e.getMessage());
       }
     }
   }

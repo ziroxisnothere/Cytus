@@ -84,7 +84,7 @@ public class CytusConfig {
     if (reload(invalidRecipeID, "invalid-recipe-id")) loaded++; else failed++;
     if (reload(invalidSelectBundle, "invalid-select-bundle")) loaded++; else failed++;
 
-    logger.info("Cytus config reloaded: {} modules loaded, {} failed", loaded, failed);
+    logger.info("Cytus config reloaded: " + loaded + " modules loaded, " + failed + " failed");
     return failed == 0;
   }
 
@@ -102,18 +102,18 @@ public class CytusConfig {
             .getResourceAsStream(configName + ".toml");
         if (defaultStream != null) {
           Files.copy(defaultStream, configPath, StandardCopyOption.REPLACE_EXISTING);
-          logger.info("Created default config: {}", configPath);
+          logger.info("Created default config: " + configPath);
         }
       }
 
       try (CommentedFileConfig config = CommentedFileConfig.builder(configPath).build()) {
         config.load();
         module.reload(config);
-        logger.debug("Reloaded config: {}", configName);
+        logger.debug("Reloaded config: " + configName);
         return true;
       }
     } catch (Exception e) {
-      logger.error("Failed to reload config: {}", configName, e);
+      logger.error("Failed to reload config: " + configName, e);
       return false;
     }
   }

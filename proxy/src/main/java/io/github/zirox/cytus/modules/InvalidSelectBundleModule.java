@@ -18,7 +18,7 @@
 package io.github.zirox.cytus.modules;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * InvalidSelectBundleModule checks Select Bundle packets (used for server links
@@ -43,8 +43,8 @@ public class InvalidSelectBundleModule extends ViolationsModule {
     if (configYml == null) {
       return;
     }
-    this.enabled = configYml.getBoolean("enabled", true);
-    this.vls = configYml.getDouble("vls", 100.0);
+    this.enabled = configYml.getOrElse("enabled", true);
+    this.vls = configYml.getOrElse("vls", 100.0);
   }
 
   @Override

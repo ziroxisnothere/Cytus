@@ -25,8 +25,9 @@ import io.netty.buffer.ByteBuf;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -76,59 +77,59 @@ public class PacketLimiterModule extends ViolationsModule {
       return;
     }
 
-    this.enabled = configYml.getBoolean("enabled", true);
-    this.vls = configYml.getDouble("vls", 50.0);
+    this.enabled = configYml.getOrElse("enabled", true);
+    this.vls = configYml.getOrElse("vls", 50.0);
 
-    String maxSize = configYml.getString("max_size", "32kb");
+    String maxSize = configYml.getOrElse("max_size", "32kb");
     this.maxSizeBytes = parseSizeToBytes(maxSize);
 
-    this.tabCompleteLimit = configYml.getInt("tab_complete_limit", 128);
-    this.fireworkEffectLimit = configYml.getInt("firework_effect_limit", 8);
-    this.fireworkPowerLimit = configYml.getInt("firework_power_limit", 3);
+    this.tabCompleteLimit = configYml.getIntOrElse("tab_complete_limit", 128);
+    this.fireworkEffectLimit = configYml.getIntOrElse("firework_effect_limit", 8);
+    this.fireworkPowerLimit = configYml.getIntOrElse("firework_power_limit", 3);
 
     CommentedConfig itemLimits = configYml.get("item_limits");
     if (itemLimits != null) {
-      this.displayNameLimit = itemLimits.getInt("displayname", 256);
-      this.loreLimit = itemLimits.getInt("lore", 128);
+      this.displayNameLimit = itemLimits.getIntOrElse("displayname", 256);
+      this.loreLimit = itemLimits.getIntOrElse("lore", 128);
     }
 
     CommentedConfig bookLimits = configYml.get("book_limits");
     if (bookLimits != null) {
-      this.bookTitleLimit = bookLimits.getInt("title", 64);
-      this.bookAuthorLimit = bookLimits.getInt("author", 64);
-      this.bookPagesLimit = bookLimits.getInt("pages", 50);
-      this.bookContentLimit = bookLimits.getInt("content", 512);
+      this.bookTitleLimit = bookLimits.getIntOrElse("title", 64);
+      this.bookAuthorLimit = bookLimits.getIntOrElse("author", 64);
+      this.bookPagesLimit = bookLimits.getIntOrElse("pages", 50);
+      this.bookContentLimit = bookLimits.getIntOrElse("content", 512);
     }
 
-    this.maxSignSize = configYml.getInt("max_size_sign", 128);
+    this.maxSignSize = configYml.getIntOrElse("max_size_sign", 128);
 
     CommentedConfig maxFlags = configYml.get("max_flags");
     this.maxFlagsLimits.clear();
     if (maxFlags != null) {
-      this.maxFlagsEnabled = maxFlags.getBoolean("enabled", true);
+      this.maxFlagsEnabled = maxFlags.getOrElse("enabled", true);
 
-      for (String key : maxFlags.entrySet().keySet()) {
-        int limit = maxFlags.getInt(key);
+      for (CommentedConfig.Entry entry : maxFlags.entrySet()) {
+        String key = entry.getKey();
         if (!key.equals("enabled")) {
-          this.addFlagLimit(key, limit);
+          this.addFlagLimit(key, ((Number) entry.getValue()).intValue());
         }
       }
     }
 
-    this.maxPPS = configYml.getInt("max_pps", 2048);
-    String maxBPStr = configYml.getString("max_bps", "32kb");
+    this.maxPPS = configYml.getIntOrElse("max_pps", 2048);
+    String maxBPStr = configYml.getOrElse("max_bps", "32kb");
     this.maxBPS = parseSizeToBytes(maxBPStr);
 
-    this.maxNbtStringLength = configYml.getInt("max_nbt_string_length", 128);
-    this.maxSlotId = configYml.getInt("max_slot_id", 54);
-    this.maxButtonId = configYml.getInt("max_button_id", 8);
-    this.pickItemSlotMin = configYml.getInt("pick_item_slot_min", 0);
-    this.pickItemSlotMax = configYml.getInt("pick_item_slot_max", 44);
+    this.maxNbtStringLength = configYml.getIntOrElse("max_nbt_string_length", 128);
+    this.maxSlotId = configYml.getIntOrElse("max_slot_id", 54);
+    this.maxButtonId = configYml.getIntOrElse("max_button_id", 8);
+    this.pickItemSlotMin = configYml.getIntOrElse("pick_item_slot_min", 0);
+    this.pickItemSlotMax = configYml.getIntOrElse("pick_item_slot_max", 44);
 
     CommentedConfig movePacket = configYml.get("move_packet");
     if (movePacket != null) {
-      this.moveMaxCoordinate = movePacket.getDouble("max_coordinate", 30000000.0);
-      this.moveRejectInfinite = movePacket.getBoolean("reject_infinite", true);
+      this.moveMaxCoordinate = movePacket.getOrElse("max_coordinate", 30000000.0);
+      this.moveRejectInfinite = movePacket.getOrElse("reject_infinite", true);
     } else {
       this.moveMaxCoordinate = 30000000.0;
       this.moveRejectInfinite = true;
@@ -297,7 +298,7 @@ public class PacketLimiterModule extends ViolationsModule {
       if (line == null) {
         continue;
       }
-      String text = Component.textAndArgsToString(line);
+      String text = PlainTextComponentSerializer.plainText().serialize(line);
       if (text.length() > this.maxSignSize) {
         return CheckItemResult.INVALID_SIGN_SIZE;
       }

@@ -65,11 +65,11 @@ public class InvalidPayloadModule extends ViolationsModule {
     if (configYml == null) {
       return;
     }
-    this.enabled = configYml.getBoolean("enabled", true);
-    this.vls = configYml.getDouble("vls", 100.0);
-    this.beehiveCrash = configYml.getBoolean("beehive_crash", true);
-    this.logsExploit = configYml.getBoolean("logs_exploit", true);
-    this.maxPayloadSize = configYml.getInt("max_payload_size", 1024);
+    this.enabled = configYml.getOrElse("enabled", true);
+    this.vls = configYml.getOrElse("vls", 100.0);
+    this.beehiveCrash = configYml.getOrElse("beehive_crash", true);
+    this.logsExploit = configYml.getOrElse("logs_exploit", true);
+    this.maxPayloadSize = configYml.getIntOrElse("max_payload_size", 1024);
   }
 
   @Override

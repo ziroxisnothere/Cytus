@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -46,9 +45,9 @@ public class PacketFilterModule extends ActionCooldownsModule {
 
     super.reload(config);
 
-    this.enabled = config.getBoolean("enabled", true);
-    this.vls = config.getDoubleOrElse("vls", 50.0);
-    this.offlinePackets = config.getBoolean("offline_packets", true);
+    this.enabled = config.getOrElse("enabled", true);
+    this.vls = config.getOrElse("vls", 50.0);
+    this.offlinePackets = config.getOrElse("offline_packets", true);
 
     this.blacklist.clear();
     List<String> bl = config.get("blacklist");

@@ -21,7 +21,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import io.github.zirox.cytus.config.CytusConfig;
 import java.util.List;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -47,7 +47,7 @@ public class CytusCommand implements SimpleCommand {
 
   @Override
   public void execute(Invocation invocation) {
-    String[] args = invocation.args();
+    String[] args = invocation.arguments();
     CommandSource source = invocation.source();
 
     if (args.length == 0) {
@@ -86,7 +86,7 @@ public class CytusCommand implements SimpleCommand {
 
   @Override
   public boolean hasPermission(Invocation invocation) {
-    String[] args = invocation.args();
+    String[] args = invocation.arguments();
     if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
       return invocation.source().hasPermission("cytus.command.reload");
     }
@@ -95,7 +95,7 @@ public class CytusCommand implements SimpleCommand {
 
   @Override
   public List<String> suggest(Invocation invocation) {
-    String[] args = invocation.args();
+    String[] args = invocation.arguments();
     if (args.length == 1) {
       return List.of("reload", "info");
     }

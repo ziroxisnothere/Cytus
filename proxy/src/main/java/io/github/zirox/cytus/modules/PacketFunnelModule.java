@@ -58,16 +58,16 @@ public class PacketFunnelModule extends ViolationsModule {
       return;
     }
 
-    this.enabled = config.getBoolean("enabled", true);
-    this.vls = config.getDoubleOrElse("vls", 50.0);
+    this.enabled = config.getOrElse("enabled", true);
+    this.vls = config.getOrElse("vls", 50.0);
 
-    String multiplierStr = config.getString("data_multiplier", "500");
+    String multiplierStr = config.getOrElse("data_multiplier", "500");
     this.dataMultiplier = parseSizeToBytes(multiplierStr);
 
     this.packetMultipliers = new HashMap<>();
     CommentedConfig multipliersSection = config.get("packet_multipliers");
     if (multipliersSection != null) {
-      for (Map.Entry<String, Object> entry : multipliersSection.entrySet()) {
+      for (CommentedConfig.Entry entry : multipliersSection.entrySet()) {
         if (entry.getValue() instanceof Number) {
           this.packetMultipliers.put(entry.getKey(), ((Number) entry.getValue()).doubleValue());
         }
@@ -79,7 +79,7 @@ public class PacketFunnelModule extends ViolationsModule {
     this.floodgateCompensations = new HashMap<>();
     CommentedConfig floodgateSection = config.get("floodgate.compensations");
     if (floodgateSection != null) {
-      for (Map.Entry<String, Object> entry : floodgateSection.entrySet()) {
+      for (CommentedConfig.Entry entry : floodgateSection.entrySet()) {
         if (entry.getValue() instanceof Number) {
           double compensation = ((Number) entry.getValue()).doubleValue();
           if (compensation > 0.0) {
@@ -95,7 +95,7 @@ public class PacketFunnelModule extends ViolationsModule {
       this.whitelist.addAll(loadedWhitelist);
     }
 
-    this.maxWhitelistCapacity = config.getInt("max-whitelist-capacity", 10);
+    this.maxWhitelistCapacity = config.getIntOrElse("max-whitelist-capacity", 10);
   }
 
   /**
@@ -129,12 +129,12 @@ public class PacketFunnelModule extends ViolationsModule {
     if (super.shouldCancel(player, packetName, capacity)) {
       if (packetName != null && this.whitelist.contains(packetName)) {
         if (capacity <= this.maxWhitelistCapacity) {
-          logger.debug("Packet {} is whitelisted but capacity {} <= max {}",
-              packetName, capacity, this.maxWhitelistCapacity);
+          logger.debug("Packet " + packetName + " is whitelisted but capacity "
+              + capacity + " <= max " + this.maxWhitelistCapacity);
           return false;
         }
-        logger.debug("Packet {} is whitelisted but capacity {} > max {}",
-            packetName, capacity, this.maxWhitelistCapacity);
+        logger.debug("Packet " + packetName + " is whitelisted but capacity "
+            + capacity + " > max " + this.maxWhitelistCapacity);
       }
       return true;
     }

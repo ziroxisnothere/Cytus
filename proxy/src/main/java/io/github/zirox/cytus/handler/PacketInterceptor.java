@@ -36,7 +36,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.util.concurrent.atomic.AtomicLong;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * PacketInterceptor is a Netty handler that intercepts serverbound packets
@@ -315,7 +315,7 @@ public class PacketInterceptor extends ChannelInboundHandlerAdapter {
       return;
     }
 
-    String channel = event.getIdentifier();
+    String channel = event.getIdentifier().getId();
     byte[] data = event.getData();
 
     if (invalidPayload.isExploitChannel(channel)) {

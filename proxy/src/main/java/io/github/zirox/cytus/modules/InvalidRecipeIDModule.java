@@ -22,7 +22,7 @@ import com.velocitypowered.api.proxy.Player;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * InvalidRecipeIDModule validates that recipe IDs in recipe packets are
@@ -51,15 +51,15 @@ public class InvalidRecipeIDModule extends ViolationsModule {
     if (configYml == null) {
       return;
     }
-    this.enabled = configYml.getBoolean("enabled", true);
-    this.vls = configYml.getDouble("vls", 100.0);
+    this.enabled = configYml.getOrElse("enabled", true);
+    this.vls = configYml.getOrElse("vls", 100.0);
     // In a real implementation, this would fetch recipe displays from the server
     // For Velocity proxy, we'd need to get this from connected game servers
     this.allRecipeDisplays = getAllRecipeDisplays();
     if (this.allRecipeDisplays != null && !this.allRecipeDisplays.isEmpty()) {
       this.logger.info("Invalid Recipe ID module initialized successfully");
     } else {
-      this.logger.warning("Unable to load recipe displays - Invalid Recipe ID module disabled");
+      this.logger.warn("Unable to load recipe displays - Invalid Recipe ID module disabled");
       this.enabled = false;
     }
   }
@@ -110,7 +110,7 @@ public class InvalidRecipeIDModule extends ViolationsModule {
           (recipeIndex < 0 || recipeIndex >= this.allRecipeDisplays.size())) {
         // Cancel the event
         String reason = "Invalid recipe: " + recipeIndex + "/" + this.allRecipeDisplays.size();
-        this.logger.debug("{}", reason);
+        this.logger.debug(reason);
         if (this.vls > 0.0) {
           addViolations(player, event, this.vls, reason);
         }
@@ -146,7 +146,7 @@ public class InvalidRecipeIDModule extends ViolationsModule {
                                String reason) {
     // If this class extended ActionCooldownsModule, we'd call super.recordViolation
     // For now, just log
-    this.logger.debug("Violation for {}: {} VLS", player.getUsername(), vls);
+    this.logger.debug("Violation for " + player.getUsername() + ": " + vls + " VLS");
   }
 
   @Override
